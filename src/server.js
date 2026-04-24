@@ -191,7 +191,7 @@ app.get("/chat/history", authMiddleware, async (req, res) => {
       `SELECT id, user_message, ai_response, created_at
        FROM chat_messages
        WHERE user_id = $1
-       ORDER BY created_at DESC`,
+       ORDER BY created_at ASC`,
       [req.user.id],
     );
 
