@@ -1,11 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-const authMiddleware = require("./middleware");
 require("dotenv").config();
 
 const pool = require("./db");
 const { generateToken } = require("./auth");
+const { authMiddleware, authorizeRoles } = require("./middleware");
 
 const app = express();
 
@@ -119,6 +119,25 @@ app.get("/profile", authMiddleware, (req, res) => {
     user: req.user,
   });
 });
+
+app.get("/admin", authMiddleware, authorizeRoles("admin"), (req, res) => {
+  res.json({
+    message: "Admin route",
+    user: req.user,
+  });
+});
+
+app.get(
+  "/recruiter",
+  authMiddleware,
+  authorizeRoles("recruiter", "admin"),
+  (req, res) => {
+    res.json({
+      message: "Recruiter route",
+      user: req.user,
+    });
+  },
+);
 
 const PORT = process.env.PORT || 3000;
 
