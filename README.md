@@ -1,99 +1,128 @@
 # HR AI Chatbot API
 
-Backend API for an AI-powered HR chatbot built with Node.js, Express, PostgreSQL, and OpenAI.
-
----
+Backend API for an AI-powered HR chatbot built with Node.js, Express, PostgreSQL, OpenAI, JWT authentication, RBAC, and Docker.
 
 ## Features
 
-- User registration and login with JWT authentication
+- User registration and login
+- JWT authentication
 - Role-Based Access Control (RBAC)
-- Protected API routes
+- Protected routes
 - PostgreSQL database integration
-- AI-powered chatbot using OpenAI
-- RESTful API design
-
----
+- OpenAI-powered HR chatbot
+- Docker and Docker Compose setup
+- RESTful API structure
 
 ## Tech Stack
 
 - Node.js
 - Express.js
 - PostgreSQL
-- JWT (Authentication)
-- bcrypt (Password hashing)
 - OpenAI API
-
----
+- JWT
+- bcrypt
+- Docker
+- Docker Compose
 
 ## API Endpoints
 
 ### Auth
 
-- `POST /register` → Register a new user
-- `POST /login` → Login and receive JWT token
+- `POST /register` - Register a new user
+- `POST /login` - Login and receive JWT token
 
-### Protected
+### User
 
-- `GET /profile` → Get user profile (requires token)
+- `GET /profile` - Get authenticated user profile
 
 ### RBAC
 
-- `GET /admin` → Admin-only route
-- `GET /recruiter` → Recruiter/Admin route
+- `GET /admin` - Admin-only route
+- `GET /recruiter` - Recruiter/Admin route
 
 ### AI
 
-- `POST /chat` → Chat with AI assistant (requires token)
+- `POST /chat` - Send a message to the HR AI assistant
 
----
+## Environment Variables
 
-## Setup
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/eliezaylaa/hr-ai-chatbot-api.git
-cd hr-ai-chatbot-api
-```
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Create `.env` file
+Create a `.env` file:
 
 ```env
 PORT=4567
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hr_ai_chatbot
+DATABASE_URL=postgresql://postgres:postgres@db:5432/hr_ai_chatbot
 JWT_SECRET=your_secret
 OPENAI_API_KEY=your_openai_key
 ```
 
-### 4. Run the server
+For local development without Docker, use:
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hr_ai_chatbot
+```
+
+## Run with Docker
 
 ```bash
+docker compose up --build
+```
+
+App runs on:
+
+```text
+http://localhost:4568
+```
+
+## Run Locally
+
+```bash
+npm install
 npm run dev
 ```
 
----
+App runs on:
 
-## Example Request
+```text
+http://localhost:4567
+```
+
+## Example Requests
+
+### Register
+
+```bash
+curl -X POST http://localhost:4567/register \
+-H "Content-Type: application/json" \
+-d '{"email":"test@gmail.com","password":"12345"}'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:4567/login \
+-H "Content-Type: application/json" \
+-d '{"email":"test@gmail.com","password":"12345"}'
+```
+
+### Protected Profile
+
+```bash
+curl http://localhost:4567/profile \
+-H "Authorization: Bearer YOUR_TOKEN"
+```
+
+### AI Chat
 
 ```bash
 curl -X POST http://localhost:4567/chat \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer YOUR_TOKEN" \
--d '{"message":"How can I improve my CV?"}'
+-d '{"message":"How can I improve my backend developer CV for an apprenticeship?"}'
 ```
-
----
 
 ## Project Structure
 
-```
+```text
 src/
   server.js
   db.js
@@ -102,15 +131,19 @@ src/
   openai.js
 ```
 
----
+## Roadmap
+
+- Store chat history in PostgreSQL
+- Add recruiter dashboard endpoints
+- Add request validation
+- Add unit and integration tests
+- Deploy API to a cloud platform
 
 ## Notes
 
-- `.env` file is not committed for security reasons
-- OpenAI usage may require billing setup
-- Tokens must be included in protected routes
-
----
+- `.env` is not committed for security reasons
+- OpenAI API usage may require billing setup
+- Docker uses internal database host `db`
 
 ## Author
 
