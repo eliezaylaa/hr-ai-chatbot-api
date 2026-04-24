@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const pool = require("./db");
+const openai = require("./openai");
 const { generateToken } = require("./auth");
 const { authMiddleware, authorizeRoles } = require("./middleware");
 
@@ -138,6 +139,45 @@ app.get(
     });
   },
 );
+
+app.post("/chat", authMiddleware, async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({
+        message: "Message is required",
+      });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an HR assistant. Help candidates with CVs, interviews, job applications, and career advice. Keep answers clear, practical, and professional.",
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+    });
+
+    const aiResponse = completion.choices[0].message.content;
+
+    res.json({
+      userMessage: message,
+      aiResponse,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error generating AI response",
+    });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 
