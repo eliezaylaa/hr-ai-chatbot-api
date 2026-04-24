@@ -2,6 +2,12 @@
 
 Backend API for an AI-powered HR chatbot built with Node.js, Express, PostgreSQL, OpenAI, JWT authentication, RBAC, and Docker.
 
+## Project Context
+
+This project was built as part of my preparation for a backend apprenticeship.
+
+The goal was to practice real backend concepts such as authentication, role-based access control, PostgreSQL database design, Docker setup, and AI API integration using OpenAI.
+
 ## Features
 
 - User registration and login
