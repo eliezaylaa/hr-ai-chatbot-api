@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const authMiddleware = require("./middleware");
 require("dotenv").config();
 
 const pool = require("./db");
@@ -110,6 +111,13 @@ app.post("/login", async (req, res) => {
       message: "Error logging in",
     });
   }
+});
+
+app.get("/profile", authMiddleware, (req, res) => {
+  res.json({
+    message: "Protected route",
+    user: req.user,
+  });
 });
 
 const PORT = process.env.PORT || 3000;
