@@ -167,6 +167,12 @@ app.post("/chat", authMiddleware, async (req, res) => {
 
     const aiResponse = completion.choices[0].message.content;
 
+    await pool.query(
+      `INSERT INTO chat_messages (user_id, user_message, ai_response)
+       VALUES ($1, $2, $3)`,
+      [req.user.id, message, aiResponse],
+    );
+
     res.json({
       userMessage: message,
       aiResponse,
@@ -175,6 +181,27 @@ app.post("/chat", authMiddleware, async (req, res) => {
     console.error(error);
     res.status(500).json({
       message: "Error generating AI response",
+    });
+  }
+});
+
+app.get("/chat/history", authMiddleware, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, user_message, ai_response, created_at
+       FROM chat_messages
+       WHERE user_id = $1
+       ORDER BY created_at DESC`,
+      [req.user.id],
+    );
+
+    res.json({
+      history: result.rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error fetching chat history",
     });
   }
 });
