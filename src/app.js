@@ -140,6 +140,35 @@ app.get(
   },
 );
 
+app.post("/ask", async (req, res) => {
+  try {
+    const { question } = req.body;
+
+    if (!question) {
+      return res.status(400).json({
+        error: "Question is required",
+      });
+    }
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "You are a helpful career assistant." },
+        { role: "user", content: question },
+      ],
+    });
+
+    res.json({
+      answer: response.choices[0].message.content,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "OpenAI failed",
+    });
+  }
+});
+
 app.post("/chat", authMiddleware, async (req, res) => {
   try {
     const { message } = req.body;
@@ -156,12 +185,9 @@ app.post("/chat", authMiddleware, async (req, res) => {
         {
           role: "system",
           content:
-            "You are an HR assistant. Help candidates with CVs, interviews, job applications, and career advice. Keep answers clear, practical, and professional.",
+            "You are an HR assistant. Help candidates with CVs, interviews, job applications, and career advice.",
         },
-        {
-          role: "user",
-          content: message,
-        },
+        { role: "user", content: message },
       ],
     });
 
